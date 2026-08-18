@@ -10,7 +10,7 @@ run_worker_first = [ "/api/*" ]
 [[kv_namespaces]]
 binding = "SELECTIONS_KV"
 # REQUIRED: replace this with the real Cloudflare KV namespace ID for SELECTIONS_KV
-id = "trackside-apps"
+id = "c86c20ab1b024ce6800bff046efde8d6"
 
 [vars]
 # The Viz Trio show these selections get imported into.
