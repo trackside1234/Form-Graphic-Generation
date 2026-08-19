@@ -9,26 +9,26 @@
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@500;600;700&display=swap" rel="stylesheet">
 <style>
   :root{
-    --green-deep:#12291F;
-    --green-panel:#1B3A2C;
-    --green-panel-2:#204331;
-    --line:#33513F;
-    --cream:#F1ECDE;
-    --cream-dim:#B9C4B7;
-    --gold:#C9A227;
-    --gold-bright:#E6BE3F;
-    --rust:#B5482C;
+    --navy-deep:#19233e;
+    --navy-panel:#222d4d;
+    --navy-panel-2:#29365c;
+    --line:#3a4770;
+    --ink:#EDEFF5;
+    --ink-dim:#9AA5C4;
+    --teal:#68D7D0;
+    --teal-bright:#8EE6E0;
+    --coral:#E2574C;
     --radius:10px;
     --shadow:0 8px 24px rgba(0,0,0,0.35);
   }
   *{box-sizing:border-box;}
   html,body{margin:0;padding:0;}
   body{
-    background:var(--green-deep);
+    background:var(--navy-deep);
     background-image:
-      radial-gradient(circle at 15% -10%, rgba(230,190,63,0.08), transparent 45%),
-      radial-gradient(circle at 100% 0%, rgba(230,190,63,0.05), transparent 40%);
-    color:var(--cream);
+      radial-gradient(circle at 15% -10%, rgba(104,215,208,0.10), transparent 45%),
+      radial-gradient(circle at 100% 0%, rgba(104,215,208,0.06), transparent 40%);
+    color:var(--ink);
     font-family:'Inter',sans-serif;
     min-height:100vh;
     -webkit-font-smoothing:antialiased;
@@ -36,25 +36,24 @@
   a{color:inherit;}
   h1,h2,h3{font-family:'Fraunces',serif;font-weight:600;margin:0;letter-spacing:0.2px;}
   .mono{font-family:'IBM Plex Mono',monospace;}
-  .app{max-width:760px;margin:0 auto;padding:28px 18px 64px;}
+  .app{max-width:820px;margin:0 auto;padding:28px 18px 64px;}
   header.topbar{
     display:flex;align-items:baseline;justify-content:space-between;
     padding-bottom:18px;margin-bottom:22px;border-bottom:1px solid var(--line);
   }
   header.topbar .brand{display:flex;align-items:baseline;gap:10px;}
   header.topbar .brand .mark{
-    width:30px;height:30px;border-radius:50%;background:var(--gold);
+    width:30px;height:30px;border-radius:50%;background:var(--teal);
     display:inline-flex;align-items:center;justify-content:center;
-    font-family:'IBM Plex Mono',monospace;font-weight:700;color:var(--green-deep);font-size:14px;
+    font-family:'IBM Plex Mono',monospace;font-weight:700;color:var(--navy-deep);font-size:14px;
     flex:none;
   }
-  header.topbar h1{font-size:20px;color:var(--cream);}
-  header.topbar .tag{font-size:12px;color:var(--cream-dim);text-transform:uppercase;letter-spacing:1.2px;}
-  .nav-link{font-size:13px;color:var(--cream-dim);text-decoration:none;border-bottom:1px dotted var(--cream-dim);}
-  .nav-link:hover{color:var(--gold-bright);border-color:var(--gold-bright);}
-
+  header.topbar h1{font-size:20px;color:var(--ink);}
+  header.topbar .tag{font-size:12px;color:var(--ink-dim);text-transform:uppercase;letter-spacing:1.2px;}
+  .nav-link{font-size:13px;color:var(--ink-dim);text-decoration:none;border-bottom:1px dotted var(--ink-dim);}
+  .nav-link:hover{color:var(--teal-bright);border-color:var(--teal-bright);}
   .card{
-    background:var(--green-panel);
+    background:var(--navy-panel);
     border:1px solid var(--line);
     border-radius:var(--radius);
     padding:22px;
@@ -63,133 +62,120 @@
   .card + .card{margin-top:16px;}
   .eyebrow{
     font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:1.5px;
-    color:var(--gold);text-transform:uppercase;margin-bottom:6px;display:block;
+    color:var(--teal);text-transform:uppercase;margin-bottom:6px;display:block;
   }
-  p.lead{color:var(--cream-dim);font-size:14.5px;line-height:1.55;margin:6px 0 0;}
-
+  p.lead{color:var(--ink-dim);font-size:14.5px;line-height:1.55;margin:6px 0 0;}
   .role-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:20px;}
   @media(max-width:520px){.role-grid{grid-template-columns:1fr;}}
   .role-card{
-    background:var(--green-panel);border:1px solid var(--line);border-radius:var(--radius);
-    padding:24px 20px;text-decoration:none;color:var(--cream);
+    background:var(--navy-panel);border:1px solid var(--line);border-radius:var(--radius);
+    padding:24px 20px;text-decoration:none;color:var(--ink);
     transition:border-color .15s, transform .15s;
     display:block;
   }
-  .role-card:hover{border-color:var(--gold);transform:translateY(-2px);}
-  .role-card .role-title{font-family:'Fraunces',serif;font-size:19px;color:var(--gold-bright);margin-bottom:6px;}
-  .role-card .role-desc{font-size:13px;color:var(--cream-dim);line-height:1.5;}
-
+  .role-card:hover{border-color:var(--teal);transform:translateY(-2px);}
+  .role-card .role-title{font-family:'Fraunces',serif;font-size:19px;color:var(--teal-bright);margin-bottom:6px;}
+  .role-card .role-desc{font-size:13px;color:var(--ink-dim);line-height:1.5;}
   .presenter-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:16px;}
   @media(max-width:480px){.presenter-grid{grid-template-columns:1fr;}}
   .presenter-btn{
-    background:var(--green-panel-2);border:1px solid var(--line);border-radius:var(--radius);
-    padding:16px;text-align:left;color:var(--cream);font-size:15px;font-weight:600;
+    background:var(--navy-panel-2);border:1px solid var(--line);border-radius:var(--radius);
+    padding:16px;text-align:left;color:var(--ink);font-size:15px;font-weight:600;
     cursor:pointer;transition:border-color .15s;font-family:'Inter',sans-serif;
   }
-  .presenter-btn:hover{border-color:var(--gold);}
+  .presenter-btn:hover{border-color:var(--teal);}
   .presenter-btn .done-pill{
     display:inline-block;margin-top:6px;font-size:11px;font-family:'IBM Plex Mono',monospace;
-    color:var(--gold-bright);letter-spacing:0.5px;
+    color:var(--teal-bright);letter-spacing:0.5px;
   }
-
-  label{display:block;font-size:12px;color:var(--cream-dim);margin-bottom:6px;text-transform:uppercase;letter-spacing:0.8px;}
+  label{display:block;font-size:12px;color:var(--ink-dim);margin-bottom:6px;text-transform:uppercase;letter-spacing:0.8px;}
   input[type=date], select, input[type=text]{
-    width:100%;background:var(--green-deep);border:1px solid var(--line);color:var(--cream);
+    width:100%;background:var(--navy-deep);border:1px solid var(--line);color:var(--ink);
     border-radius:8px;padding:11px 12px;font-size:15px;font-family:'Inter',sans-serif;
   }
-  input[type=date]:focus, select:focus, input[type=text]:focus{outline:2px solid var(--gold);outline-offset:1px;}
+  input[type=date]:focus, select:focus, input[type=text]:focus{outline:2px solid var(--teal);outline-offset:1px;}
   .field{margin-bottom:16px;}
   .row{display:flex;gap:12px;}
   .row > .field{flex:1;}
-
   button.btn{
-    background:var(--gold);color:var(--green-deep);border:none;border-radius:8px;
+    background:var(--teal);color:var(--navy-deep);border:none;border-radius:8px;
     padding:12px 18px;font-size:14.5px;font-weight:700;cursor:pointer;font-family:'Inter',sans-serif;
     transition:background .15s;
   }
-  button.btn:hover{background:var(--gold-bright);}
-  button.btn:disabled{background:#5a5a4d;color:#a9a99c;cursor:not-allowed;}
+  button.btn:hover{background:var(--teal-bright);}
+  button.btn:disabled{background:#4a5470;color:#8b93ab;cursor:not-allowed;}
   button.btn.ghost{
-    background:transparent;color:var(--cream);border:1px solid var(--line);
+    background:transparent;color:var(--ink);border:1px solid var(--line);
   }
-  button.btn.ghost:hover{border-color:var(--gold);color:var(--gold-bright);}
+  button.btn.ghost:hover{border-color:var(--teal);color:var(--teal-bright);}
   button.btn.small{padding:8px 12px;font-size:13px;}
-
   .meeting-item{
     border:1px solid var(--line);border-radius:8px;padding:12px 14px;margin-bottom:8px;
     cursor:pointer;display:flex;justify-content:space-between;align-items:center;
   }
-  .meeting-item:hover{border-color:var(--gold);}
-  .meeting-item.selected{border-color:var(--gold);background:rgba(201,162,39,0.08);}
+  .meeting-item:hover{border-color:var(--teal);}
+  .meeting-item.selected{border-color:var(--teal);background:rgba(104,215,208,0.08);}
   .meeting-item .m-name{font-weight:600;}
-  .meeting-item .m-meta{font-size:12px;color:var(--cream-dim);}
-
+  .meeting-item .m-meta{font-size:12px;color:var(--ink-dim);}
   .race-tabs{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:16px;}
   .race-tab{
     font-family:'IBM Plex Mono',monospace;font-size:13px;font-weight:600;
-    background:var(--green-panel-2);border:1px solid var(--line);color:var(--cream-dim);
+    background:var(--navy-panel-2);border:1px solid var(--line);color:var(--ink-dim);
     border-radius:6px;padding:7px 11px;cursor:pointer;
   }
-  .race-tab.active{border-color:var(--gold);color:var(--gold-bright);}
-  .race-tab.done::after{content:" \2713";color:var(--gold-bright);}
-
+  .race-tab.active{border-color:var(--teal);color:var(--teal-bright);}
+  .race-tab.done::after{content:" \2713";color:var(--teal-bright);}
   .race-head{margin-bottom:14px;}
   .race-head .r-title{font-size:18px;}
-  .race-head .r-meta{font-size:12.5px;color:var(--cream-dim);margin-top:2px;}
-
+  .race-head .r-meta{font-size:12.5px;color:var(--ink-dim);margin-top:2px;}
   .runner{
     display:flex;align-items:center;gap:14px;
     border:1px solid var(--line);border-radius:10px;padding:12px 14px;margin-bottom:8px;
     cursor:pointer;transition:border-color .15s, background .15s;
-    background:var(--green-panel-2);
+    background:var(--navy-panel-2);
   }
-  .runner:hover{border-color:var(--gold);}
-  .runner.selected{border-color:var(--gold-bright);background:rgba(201,162,39,0.14);}
+  .runner:hover{border-color:var(--teal);}
+  .runner.selected{border-color:var(--teal-bright);background:rgba(104,215,208,0.14);}
   .runner.scratched{opacity:0.4;cursor:not-allowed;}
   .saddlecloth{
-    flex:none;width:38px;height:38px;border-radius:6px;background:var(--cream);color:var(--green-deep);
+    flex:none;width:38px;height:38px;border-radius:6px;background:var(--ink);color:var(--navy-deep);
     display:flex;align-items:center;justify-content:center;font-family:'IBM Plex Mono',monospace;
-    font-weight:700;font-size:16px;border:2px solid var(--green-deep);
+    font-weight:700;font-size:16px;border:2px solid var(--navy-deep);
   }
   .runner .r-name{font-weight:600;font-size:15px;}
-  .runner .r-trainer{font-size:12.5px;color:var(--cream-dim);margin-top:2px;}
-  .runner .r-check{margin-left:auto;color:var(--gold-bright);font-size:18px;visibility:hidden;}
+  .runner .r-trainer{font-size:12.5px;color:var(--ink-dim);margin-top:2px;}
+  .runner .r-check{margin-left:auto;color:var(--teal-bright);font-size:18px;visibility:hidden;}
   .runner.selected .r-check{visibility:visible;}
-
   table.board{width:100%;border-collapse:collapse;font-size:13.5px;}
   table.board th, table.board td{
     border:1px solid var(--line);padding:8px 10px;text-align:left;vertical-align:top;
   }
   table.board th{
-    background:var(--green-panel-2);font-family:'IBM Plex Mono',monospace;
-    font-size:11.5px;text-transform:uppercase;letter-spacing:0.6px;color:var(--gold);
+    background:var(--navy-panel-2);font-family:'IBM Plex Mono',monospace;
+    font-size:11.5px;text-transform:uppercase;letter-spacing:0.6px;color:var(--teal);
   }
-  table.board td.empty{color:var(--cream-dim);font-style:italic;}
+  table.board td.empty{color:var(--ink-dim);font-style:italic;}
   table.board .cell-horse{font-weight:600;}
-  table.board .cell-trainer{color:var(--cream-dim);font-size:12px;}
+  table.board .cell-trainer{color:var(--ink-dim);font-size:12px;}
   .silk-edit{
-    font-family:'IBM Plex Mono',monospace;font-size:11px;background:transparent;color:var(--cream-dim);
+    font-family:'IBM Plex Mono',monospace;font-size:11px;background:transparent;color:var(--ink-dim);
     border:1px dashed var(--line);border-radius:5px;padding:3px 5px;width:120px;margin-top:4px;
   }
-
   .status{font-size:13px;margin-top:10px;min-height:18px;}
-  .status.good{color:var(--gold-bright);}
-  .status.bad{color:var(--rust);}
-  .empty-state{color:var(--cream-dim);font-size:14px;padding:20px 0;text-align:center;}
-
+  .status.good{color:var(--teal-bright);}
+  .status.bad{color:var(--coral);}
+  .empty-state{color:var(--ink-dim);font-size:14px;padding:20px 0;text-align:center;}
   .export-row{display:flex;gap:10px;flex-wrap:wrap;margin-top:14px;}
   .table-wrap{overflow-x:auto;}
-  footer.hint{font-size:12px;color:var(--cream-dim);margin-top:26px;text-align:center;}
+  footer.hint{font-size:12px;color:var(--ink-dim);margin-top:26px;text-align:center;}
 </style>
 </head>
 <body>
 <div id="app" class="app"></div>
-
 <script>
 const $ = sel => document.querySelector(sel);
 const el = (html) => { const t=document.createElement('template'); t.innerHTML=html.trim(); return t.content.firstChild; };
 const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-
 async function getJSON(u, opts){
   const r = await fetch(u, opts);
   const j = await r.json();
@@ -221,7 +207,7 @@ function shell(title, tag, bodyNode, backHref){
   `);
   app.appendChild(header);
   app.appendChild(bodyNode);
-  const foot = el(`<footer class="hint">Internal tool &middot; no login required &middot; selections reset each time the producer starts a new raceday</footer>`);
+  const foot = el(`<footer class="hint">Internal tool &middot; no login required &middot; selections reset each time the producer publishes a new preview list</footer>`);
   app.appendChild(foot);
 }
 
@@ -238,13 +224,13 @@ function renderLanding(){
   const body = el(`
     <div>
       <div class="card">
-        <span class="eyebrow">Race Day Selections</span>
-        <p class="lead">Pick a runner for each race, one selection per presenter. The producer collates everything into a Viz Trio graphics import and a backup document.</p>
+        <span class="eyebrow">Preview Show Selections</span>
+        <p class="lead">Pick a runner for each race in today's preview list, one selection per presenter. The producer collates everything into a Viz Trio graphics import and a backup document.</p>
       </div>
       <div class="role-grid">
         <a class="role-card" href="#/setup">
           <div class="role-title">I'm the Producer</div>
-          <div class="role-desc">Set today's meeting and races, then collect selections and export.</div>
+          <div class="role-desc">Build today's races-to-be-previewed list from any meetings/venues, then collect selections and export.</div>
         </a>
         <a class="role-card" href="#/dashboard">
           <div class="role-title">View Dashboard</div>
@@ -258,25 +244,24 @@ function renderLanding(){
     </div>
   `);
   shell('Selections Board', 'Presenter selections \u2192 Viz Trio graphics', body);
-
   (async () => {
     const list = $('#presenterList');
     try {
-      const [{ presenters }, { raceday }] = await Promise.all([
-        getJSON('/api/presenters'), getJSON('/api/raceday')
+      const [{ presenters }, { show }] = await Promise.all([
+        getJSON('/api/presenters'), getJSON('/api/show')
       ]);
       let doneIds = new Set();
-      if(raceday){
+      if(show){
         try{ const { selections } = await getJSON('/api/selections'); doneIds = new Set(selections.map(s=>s.presenterId)); }catch{}
       }
       list.innerHTML = '';
       presenters.forEach(p => {
-        const btn = el(`<button class="presenter-btn">${esc(p.name)}${doneIds.has(p.id) ? `<div class="done-pill">SELECTIONS IN &mdash; TAP TO REVIEW</div>`:''}</button>`);
+        const btn = el(`<button class="presenter-btn">${esc(p.name)}${doneIds.has(p.id) ? ` <div class="done-pill">SELECTIONS IN &mdash; TAP TO REVIEW</div>` : ''}</button>`);
         btn.onclick = () => location.hash = `#/select/${p.id}`;
         list.appendChild(btn);
       });
-      if(!raceday){
-        list.appendChild(el(`<div class="empty-state" style="grid-column:1/-1">No raceday set yet &mdash; ask the producer to set it up first.</div>`));
+      if(!show){
+        list.appendChild(el(`<div class="empty-state" style="grid-column:1/-1">No preview list set yet &mdash; ask the producer to set it up first.</div>`));
       }
     } catch(e){
       list.innerHTML = `<div class="empty-state">Could not load presenters: ${esc(e.message)}</div>`;
@@ -289,7 +274,7 @@ function renderSetup(){
   const body = el(`
     <div>
       <div class="card">
-        <span class="eyebrow">Step 1 &middot; Pick the date</span>
+        <span class="eyebrow">Find meetings</span>
         <div class="row">
           <div class="field">
             <label for="date">Date</label>
@@ -307,41 +292,152 @@ function renderSetup(){
         <div class="status" id="meetingsStatus"></div>
       </div>
       <div class="card" id="meetingsCard" style="display:none">
-        <span class="eyebrow">Step 2 &middot; Choose the meeting</span>
+        <span class="eyebrow">Meetings &middot; tap a meeting to expand, then tap a race to add it</span>
         <div id="meetingsList"></div>
       </div>
-      <div class="card" id="confirmCard" style="display:none">
-        <span class="eyebrow">Step 3 &middot; Confirm &amp; publish</span>
-        <p class="lead" id="confirmSummary"></p>
-        <button class="btn" id="publishBtn">Set as today's raceday</button>
+      <div class="card" id="cartCard">
+        <span class="eyebrow">Races to be previewed</span>
+        <p class="lead" id="cartSummary">No races added yet.</p>
+        <div id="cartList"></div>
+        <button class="btn" id="publishBtn" disabled>Publish preview list</button>
         <div class="status" id="publishStatus"></div>
       </div>
     </div>
   `);
-  shell('Producer Setup', 'Choose the venue and races for today', body, '#/');
+  shell('Producer Setup', 'Build the races-to-be-previewed list for today\u2019s show', body, '#/');
 
-  let chosenMeeting = null;
+  let cart = [];
+  const raceCache = new Map();
+  let lastMeetings = [];
+  let lastDate = '';
+  let lastCategory = 'T';
+
+  function inCart(eventId){ return cart.some(r => r.event_id === eventId); }
+
+  function renderCart(){
+    const list = $('#cartList');
+    const summary = $('#cartSummary');
+    const publishBtn = $('#publishBtn');
+    list.innerHTML = '';
+    if(!cart.length){
+      summary.textContent = 'No races added yet.';
+      publishBtn.disabled = true;
+      return;
+    }
+    const venues = new Set(cart.map(r=>r.meeting_name));
+    summary.textContent = `${cart.length} race(s) across ${venues.size} meeting(s).`;
+    cart.forEach((r, i) => {
+      const row = el(`
+        <div class="meeting-item" style="cursor:default">
+          <div>
+            <div class="m-name">${esc(r.meeting_name)} &middot; R${r.race_number}</div>
+            <div class="m-meta">${esc(r.description||'')}</div>
+          </div>
+          <div style="display:flex;gap:6px">
+            <button class="btn ghost small" data-act="up">&uarr;</button>
+            <button class="btn ghost small" data-act="down">&darr;</button>
+            <button class="btn ghost small" data-act="remove">Remove</button>
+          </div>
+        </div>
+      `);
+      row.querySelector('[data-act=up]').onclick = () => { if(i>0){ [cart[i-1],cart[i]]=[cart[i],cart[i-1]]; renderCart(); } };
+      row.querySelector('[data-act=down]').onclick = () => { if(i<cart.length-1){ [cart[i+1],cart[i]]=[cart[i],cart[i+1]]; renderCart(); } };
+      row.querySelector('[data-act=remove]').onclick = () => { cart.splice(i,1); renderCart(); renderMeetingsList(); };
+      list.appendChild(row);
+    });
+    publishBtn.disabled = false;
+  }
+
+  function renderMeetingsList(){
+    const list = $('#meetingsList');
+    list.innerHTML = '';
+    if(!lastMeetings.length){
+      list.innerHTML = `<div class="empty-state">No meetings found for this date.</div>`;
+      return;
+    }
+    lastMeetings.forEach(m => {
+      const name = m.name || m.meeting_name || m.venue_name || 'Unnamed meeting';
+      const races = m.races || m.events || [];
+      const meetingId = m.id || m.meeting_id || name;
+      const wrap = el(`
+        <div class="meeting-item" style="cursor:default;flex-direction:column;align-items:stretch">
+          <div style="display:flex;justify-content:space-between;align-items:center;cursor:pointer" data-role="head">
+            <div><div class="m-name">${esc(name)}</div><div class="m-meta">${races.length} races &middot; ${esc(m.track_condition||'')}</div></div>
+            <span class="mono" style="color:var(--teal)">Expand \u2192</span>
+          </div>
+          <div data-role="races" style="display:none;margin-top:10px"></div>
+        </div>
+      `);
+      const head = wrap.querySelector('[data-role=head]');
+      const raceHost = wrap.querySelector('[data-role=races]');
+      head.onclick = async () => {
+        const open = raceHost.style.display === 'block';
+        raceHost.style.display = open ? 'none' : 'block';
+        if(open) return;
+        if(!raceCache.has(meetingId)){
+          raceHost.innerHTML = `<div class="empty-state">Loading races\u2026</div>`;
+          try {
+            const details = [];
+            for(const r of races){
+              const id = r.id || r.event_id;
+              if(!id) continue;
+              const ev = await getJSON('/api/event/' + encodeURIComponent(id));
+              details.push({
+                event_id: id,
+                race_number: Number(ev.race?.race_number) || details.length + 1,
+                meeting_name: name,
+                venue_name: ev.race?.venue_name || name,
+                category: lastCategory,
+                description: ev.race?.description || '',
+                distance: ev.race?.distance || '',
+                track_condition: ev.race?.track_condition || ''
+              });
+            }
+            details.sort((a,b)=>a.race_number-b.race_number);
+            raceCache.set(meetingId, details);
+          } catch(e){
+            raceHost.innerHTML = `<div class="empty-state">${esc(e.message)}</div>`;
+            return;
+          }
+        }
+        const details = raceCache.get(meetingId);
+        raceHost.innerHTML = '';
+        details.forEach(r => {
+          const added = inCart(r.event_id);
+          const rowBtn = el(`
+            <div class="meeting-item ${added?'selected':''}">
+              <div><div class="m-name">R${r.race_number} &middot; ${esc(r.description||'')}</div><div class="m-meta">${esc(r.distance||'')}m &middot; ${esc(r.track_condition||'')}</div></div>
+              <span class="mono" style="color:var(--teal)">${added ? 'Added \u2713' : 'Add \u2192'}</span>
+            </div>
+          `);
+          rowBtn.onclick = () => {
+            if(inCart(r.event_id)){
+              cart = cart.filter(x => x.event_id !== r.event_id);
+            } else {
+              cart.push(r);
+            }
+            renderCart();
+            renderMeetingsList();
+          };
+          raceHost.appendChild(rowBtn);
+        });
+      };
+      list.appendChild(wrap);
+    });
+  }
 
   $('#loadMeetings').onclick = async () => {
     const date = $('#date').value;
     const category = $('#category').value;
+    lastDate = date; lastCategory = category;
     const status = $('#meetingsStatus');
     status.textContent = 'Loading meetings\u2026'; status.className='status';
     try {
-      const p = await getJSON(`/api/meetings?date=${encodeURIComponent(date)}&country=NZ&category=${category}`);
+      const p = await getJSON('/api/meetings?date=' + encodeURIComponent(date) + '&country=NZ&category=' + category);
       const meetings = p?.meetings || p?.data?.meetings || (Array.isArray(p?.data)?p.data:[]) || [];
-      const list = $('#meetingsList');
-      list.innerHTML = '';
-      if(!meetings.length){
-        list.innerHTML = `<div class="empty-state">No meetings found for this date.</div>`;
-      }
-      meetings.forEach(m => {
-        const name = m.name || m.meeting_name || m.venue_name || 'Unnamed meeting';
-        const races = m.races || m.events || [];
-        const item = el(`<div class="meeting-item"><div><div class="m-name">${esc(name)}</div><div class="m-meta">${races.length} races &middot; ${esc(m.track_condition||'')}</div></div><span class="mono" style="color:var(--gold)">Select \u2192</span></div>`);
-        item.onclick = () => selectMeeting(item, name, races, date, category);
-        list.appendChild(item);
-      });
+      lastMeetings = meetings;
+      raceCache.clear();
+      renderMeetingsList();
       $('#meetingsCard').style.display = 'block';
       status.textContent = `${meetings.length} meeting(s) found.`; status.className='status good';
     } catch(e){
@@ -349,70 +445,41 @@ function renderSetup(){
     }
   };
 
-  async function selectMeeting(itemNode, name, races, date, category){
-    document.querySelectorAll('.meeting-item').forEach(n=>n.classList.remove('selected'));
-    itemNode.classList.add('selected');
-    const status = $('#meetingsStatus');
-    status.textContent = 'Loading race details\u2026'; status.className='status';
-    try {
-      const raceDetails = [];
-      for(const r of races){
-        const id = r.id || r.event_id;
-        if(!id) continue;
-        const ev = await getJSON(`/api/event/${encodeURIComponent(id)}`);
-        raceDetails.push({
-          race_number: Number(ev.race?.race_number) || raceDetails.length + 1,
-          event_id: id,
-          description: ev.race?.description || ''
-        });
-      }
-      raceDetails.sort((a,b)=>a.race_number-b.race_number);
-      chosenMeeting = { date, country: 'NZ', category, meeting_name: name, races: raceDetails };
-      $('#confirmSummary').textContent = `${name} \u2014 ${raceDetails.length} races on ${date}. Publishing will reset any selections already submitted for the previous raceday.`;
-      $('#confirmCard').style.display = 'block';
-      status.textContent = 'Ready to publish.'; status.className='status good';
-    } catch(e){
-      status.textContent = e.message; status.className='status bad';
-    }
-  }
-
   $('#publishBtn').onclick = async () => {
-    if(!chosenMeeting) return;
+    if(!cart.length) return;
     const status = $('#publishStatus');
     status.textContent = 'Publishing\u2026'; status.className='status';
     try {
-      await getJSON('/api/raceday', { method:'POST', headers:{'content-type':'application/json'}, body: JSON.stringify(chosenMeeting) });
+      await getJSON('/api/show', { method:'POST', headers:{'content-type':'application/json'}, body: JSON.stringify({ date: lastDate || todayISO(), country: 'NZ', races: cart }) });
       status.textContent = 'Published. Presenters can now make their selections.'; status.className='status good';
     } catch(e){
       status.textContent = e.message; status.className='status bad';
     }
   };
+
+  renderCart();
 }
 
 // ---------- presenter selection flow ----------
 function renderSelect(presenterId){
   const body = el(`<div id="selectBody"><div class="empty-state">Loading\u2026</div></div>`);
   shell('Make Your Selections', 'Pick one runner per race', body, '#/');
-
   (async () => {
     try {
-      const [{ presenters }, { raceday }] = await Promise.all([getJSON('/api/presenters'), getJSON('/api/raceday')]);
+      const [{ presenters }, { show }] = await Promise.all([getJSON('/api/presenters'), getJSON('/api/show')]);
       const presenter = presenters.find(p=>p.id===presenterId);
       if(!presenter){ body.innerHTML = `<div class="empty-state">Unknown presenter.</div>`; return; }
-      if(!raceday){ body.innerHTML = `<div class="empty-state">No raceday has been set up yet. Ask the producer to publish one first.</div>`; return; }
-
+      if(!show){ body.innerHTML = `<div class="empty-state">No preview list has been set up yet. Ask the producer to publish one first.</div>`; return; }
       const { selections } = await getJSON('/api/selections');
-      const mySelections = new Map(selections.filter(s=>s.presenterId===presenterId).map(s=>[s.raceNumber, s]));
-
-      const races = raceday.races;
+      const mySelections = new Map(selections.filter(s=>s.presenterId===presenterId).map(s=>[s.eventId, s]));
+      const races = show.races;
       let current = 0;
       const runnerCache = new Map();
-
       const wrap = el(`
         <div>
           <div class="card">
             <span class="eyebrow">${esc(presenter.name)}</span>
-            <p class="lead">${esc(raceday.meeting_name)} &middot; ${esc(raceday.date)}</p>
+            <p class="lead">${esc(show.date)} &middot; ${races.length} race(s) across ${new Set(races.map(r=>r.meeting_name)).size} meeting(s)</p>
           </div>
           <div class="race-tabs" id="raceTabs"></div>
           <div class="card" id="raceCard"></div>
@@ -420,11 +487,16 @@ function renderSelect(presenterId){
       `);
       body.innerHTML = ''; body.appendChild(wrap);
 
+      function tabLabel(r){
+        const code = (r.venue_name || r.meeting_name || '').replace(/[^A-Za-z]/g,'').slice(0,3).toUpperCase() || 'RCE';
+        return `${code} R${r.race_number}`;
+      }
+
       function renderTabs(){
         const tabs = $('#raceTabs');
         tabs.innerHTML = '';
         races.forEach((r, i) => {
-          const t = el(`<button class="race-tab ${i===current?'active':''} ${mySelections.has(r.race_number)?'done':''}">R${r.race_number}</button>`);
+          const t = el(`<button class="race-tab ${i===current?'active':''} ${mySelections.has(r.event_id)?'done':''}" title="${esc(r.meeting_name)}">${esc(tabLabel(r))}</button>`);
           t.onclick = () => { current = i; renderTabs(); renderRace(); };
           tabs.appendChild(t);
         });
@@ -436,26 +508,36 @@ function renderSelect(presenterId){
         const race = races[current];
         let ev = runnerCache.get(race.event_id);
         if(!ev){
-          ev = await getJSON(`/api/event/${encodeURIComponent(race.event_id)}`);
+          ev = await getJSON('/api/event/' + encodeURIComponent(race.event_id));
           runnerCache.set(race.event_id, ev);
         }
-        const existing = mySelections.get(race.race_number);
+        const existing = mySelections.get(race.event_id);
         const runners = (ev.runners||[]).filter(r=>!r.is_scratched);
         raceCard.innerHTML = '';
         raceCard.appendChild(el(`
           <div class="race-head">
-            <div class="r-title">Race ${race.race_number} &mdash; ${esc(ev.race?.description||'')}</div>
-            <div class="r-meta">${esc(ev.race?.distance||'')}m &middot; ${runners.length} runners</div>
+            <div class="r-title">${esc(race.meeting_name)} &middot; Race ${race.race_number} &mdash; ${esc(ev.race?.description||race.description||'')}</div>
+            <div class="r-meta">${esc(ev.race?.distance||race.distance||'')}m &middot; ${esc(ev.race?.track_condition||race.track_condition||'')} &middot; ${runners.length} runners</div>
           </div>
         `));
         runners.forEach(r => {
           const isSel = existing && String(existing.runnerNumber) === String(r.runner_number);
+          const jockeyLabel = race.category === 'H' ? (r.driver_name || r.driver || '') : (r.jockey || '');
+          const jockeyPrefix = race.category === 'H' ? 'D' : 'J';
+          const extraBits = [
+            r.barrier ? `Barrier ${esc(r.barrier)}` : '',
+            r.weight ? `${esc(r.weight)}kg` : ''
+          ].filter(Boolean).join(' &middot; ');
+          const silk = r.silk_url_64x64
+            ? `<img src="${esc(r.silk_url_64x64)}" alt="" style="width:38px;height:38px;border-radius:6px;object-fit:cover;flex:none;border:2px solid var(--navy-deep)">`
+            : `<div class="saddlecloth">${esc(r.runner_number)}</div>`;
           const node = el(`
             <div class="runner ${isSel?'selected':''}" data-runner="${esc(r.runner_number)}">
-              <div class="saddlecloth">${esc(r.runner_number)}</div>
+              ${silk}
               <div>
-                <div class="r-name">${esc(r.name)}</div>
-                <div class="r-trainer">T: ${esc(r.trainer_name||r.trainer||'')}</div>
+                <div class="r-name">${esc(r.runner_number)}. ${esc(r.name)}</div>
+                <div class="r-trainer">T: ${esc(r.trainer_name||r.trainer||'')}${jockeyLabel ? ` &middot; ${jockeyPrefix}: ${esc(jockeyLabel)}` : ''}</div>
+                ${extraBits ? `<div class="r-trainer">${extraBits}</div>` : ''}
               </div>
               <div class="r-check">&#10003;</div>
             </div>
@@ -465,12 +547,14 @@ function renderSelect(presenterId){
               const saved = await getJSON('/api/selection', {
                 method:'POST', headers:{'content-type':'application/json'},
                 body: JSON.stringify({
-                  presenterId, raceNumber: race.race_number,
+                  presenterId, eventId: race.event_id, raceNumber: race.race_number,
+                  meetingName: race.meeting_name, description: race.description,
                   runnerNumber: r.runner_number, horseName: r.name,
-                  trainerName: r.trainer_name || r.trainer || ''
+                  trainerName: r.trainer_name || r.trainer || '',
+                  jockeyName: jockeyLabel
                 })
               });
-              mySelections.set(race.race_number, saved.selection);
+              mySelections.set(race.event_id, saved.selection);
               renderTabs();
               renderRace();
             } catch(e){ alert(e.message); }
@@ -478,7 +562,6 @@ function renderSelect(presenterId){
           raceCard.appendChild(node);
         });
       }
-
       renderTabs();
       renderRace();
     } catch(e){
@@ -491,41 +574,37 @@ function renderSelect(presenterId){
 function renderDashboard(){
   const body = el(`<div id="dashBody"><div class="empty-state">Loading\u2026</div></div>`);
   shell('Producer Dashboard', 'Review selections and export', body, '#/');
-
   (async () => {
     try {
-      const { raceday } = await getJSON('/api/raceday');
-      if(!raceday){
-        $('#dashBody').innerHTML = `<div class="card"><div class="empty-state">No raceday set yet. <a class="nav-link" href="#/setup">Set one up</a>.</div></div>`;
+      const { show } = await getJSON('/api/show');
+      if(!show){
+        $('#dashBody').innerHTML = `<div class="card"><div class="empty-state">No preview list set yet. <a class="nav-link" href="#/setup">Set one up</a>.</div></div>`;
         return;
       }
       const [{ presenters }, { selections }] = await Promise.all([getJSON('/api/presenters'), getJSON('/api/selections')]);
-      const byRaceAndPresenter = new Map();
-      selections.forEach(s => byRaceAndPresenter.set(`${s.raceNumber}:${s.presenterId}`, s));
-
-      const rows = raceday.races.map(r => {
+      const byEventAndPresenter = new Map();
+      selections.forEach(s => byEventAndPresenter.set(s.eventId + ':' + s.presenterId, s));
+      const rows = show.races.map(r => {
         const cells = presenters.map(p => {
-          const sel = byRaceAndPresenter.get(`${r.race_number}:${p.id}`);
+          const sel = byEventAndPresenter.get(r.event_id + ':' + p.id);
           if(!sel) return `<td class="empty">&mdash;</td>`;
           return `<td>
             <div class="cell-horse">${esc(sel.runnerNumber)}, ${esc(sel.horseName)}</div>
-            <div class="cell-trainer">T: ${esc(sel.trainerName)}</div>
-            <input class="silk-edit" data-race="${r.race_number}" data-presenter="${p.id}" value="${esc(sel.silkSlug)}" title="Silk key (edit if wrong)">
+            <div class="cell-trainer">T: ${esc(sel.trainerName)}${sel.jockeyName ? ` &middot; ${esc(sel.jockeyName)}` : ''}</div>
+            <input class="silk-edit" data-event="${esc(r.event_id)}" data-presenter="${p.id}" value="${esc(sel.silkSlug)}" title="Silk key (edit if wrong)">
           </td>`;
         }).join('');
-        return `<tr><th>R${r.race_number}<br><span style="font-weight:400;font-size:11px;color:var(--cream-dim)">${esc(r.description||'')}</span></th>${cells}</tr>`;
+        return `<tr><th>${esc(r.meeting_name)}<br>R${r.race_number}<br><span style="font-weight:400;font-size:11px;color:var(--ink-dim)">${esc(r.description||'')}</span></th>${cells}</tr>`;
       }).join('');
-
-      const filled = selections.length, total = raceday.races.length * presenters.length;
-
+      const filled = selections.length, total = show.races.length * presenters.length;
       $('#dashBody').innerHTML = `
         <div class="card">
-          <span class="eyebrow">${esc(raceday.meeting_name)} &middot; ${esc(raceday.date)}</span>
-          <p class="lead">${filled} of ${total} selections submitted.</p>
+          <span class="eyebrow">${esc(show.date)}</span>
+          <p class="lead">${filled} of ${total} selections submitted across ${show.races.length} race(s) and ${new Set(show.races.map(r=>r.meeting_name)).size} meeting(s).</p>
           <div class="export-row">
             <button class="btn" id="exportXml">Download Viz Trio XML</button>
             <button class="btn ghost" id="exportDoc">Download Word backup</button>
-            <a class="btn ghost" href="#/setup" style="text-decoration:none;display:inline-flex;align-items:center">Start new raceday</a>
+            <a class="btn ghost" href="#/setup" style="text-decoration:none;display:inline-flex;align-items:center">Start new preview list</a>
           </div>
           <div class="status" id="exportStatus"></div>
         </div>
@@ -539,18 +618,16 @@ function renderDashboard(){
           </div>
         </div>
       `;
-
       document.querySelectorAll('.silk-edit').forEach(input => {
         input.onchange = async () => {
           try {
             await getJSON('/api/selection/silk', {
               method:'POST', headers:{'content-type':'application/json'},
-              body: JSON.stringify({ raceNumber: input.dataset.race, presenterId: input.dataset.presenter, silkSlug: input.value })
+              body: JSON.stringify({ eventId: input.dataset.event, presenterId: input.dataset.presenter, silkSlug: input.value })
             });
           } catch(e){ alert(e.message); }
         };
       });
-
       $('#exportXml').onclick = () => { window.location.href = '/api/export/xml'; };
       $('#exportDoc').onclick = () => { window.location.href = '/api/export/doc'; };
     } catch(e){
