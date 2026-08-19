@@ -21,9 +21,7 @@ const PRESENTERS = [
   { id: "pip-morris", name: "Pip Morris", first: "Pip", headshotKey: "PipMorris" },
   { id: "emily-murphy", name: "Emily Murphy", first: "Emily", headshotKey: "EmilyMurphy" }
 ];
-
 const SHOW_KEY = "show:current";
-
 // ---------- small helpers ----------
 function jsonResponse(data, status = 200) {
   return new Response(JSON.stringify(data), {
@@ -33,7 +31,6 @@ function jsonResponse(data, status = 200) {
 }
 function cleanDate(v) { return /^\d{4}-\d{2}-\d{2}$/.test(v || "") ? v : null; }
 function cleanUUID(v) { return /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(v || "") ? v : null; }
-
 async function tabJSON(url) {
   const r = await fetch(url, { headers: { accept: "application/json", "user-agent": "Presenter-Selections/1.0" } });
   const text = await r.text();
@@ -108,7 +105,6 @@ function xmlEscape(s) {
     .replace(/"/g, "&quot;")
     .replace(/'/g, "&apos;");
 }
-
 // ---------- KV read/write ----------
 async function getShow(env) {
   const raw = await env.SELECTIONS_KV.get(SHOW_KEY);
@@ -133,7 +129,6 @@ async function clearAllSelections(env) {
   const list = await env.SELECTIONS_KV.list({ prefix: "selection:" });
   await Promise.all(list.keys.map(k => env.SELECTIONS_KV.delete(k.name)));
 }
-
 // ---------- Viz Trio XML export ----------
 function buildElementXml(env, sel, elementId) {
   const description = `${sel.presenterName.toUpperCase()}'S SELECTION/${sel.silkSlug}/${sel.horseName.toUpperCase()}/T: ${sel.trainerName.toUpperCase()}/${sel.headshotKey}/${sel.runnerNumber}/0`;
@@ -213,7 +208,6 @@ ${elements}
 ${groups}
 \t\t\t\t\t</entry></entry></entry></entry></vdom></archive>`;
 }
-
 // ---------- Word backup document ----------
 function buildWordDoc(selections) {
   const byEvent = new Map();
@@ -241,7 +235,6 @@ ${blocks}
 </body>
 </html>`;
 }
-
 // ---------- minimal in-Worker ZIP writer (stored/uncompressed entries) ----------
 let CRC_TABLE = null;
 function crc32(buf) {
@@ -274,7 +267,6 @@ function buildZip(files) {
     const data = f.data;
     const crc = crc32(data);
     const size = data.length;
-
     const lh = new Uint8Array(30 + nameBytes.length);
     const lv = new DataView(lh.buffer);
     lv.setUint32(0, 0x04034b50, true);
@@ -290,7 +282,6 @@ function buildZip(files) {
     lv.setUint16(28, 0, true);
     lh.set(nameBytes, 30);
     localParts.push(lh, data);
-
     const ch = new Uint8Array(46 + nameBytes.length);
     const cv = new DataView(ch.buffer);
     cv.setUint32(0, 0x02014b50, true);
@@ -312,7 +303,6 @@ function buildZip(files) {
     cv.setUint32(42, offset, true);
     ch.set(nameBytes, 46);
     centralParts.push(ch);
-
     offset += lh.length + data.length;
   }
   const centralSize = centralParts.reduce((a, p) => a + p.length, 0);
@@ -324,7 +314,6 @@ function buildZip(files) {
   ev.setUint16(10, files.length, true);
   ev.setUint32(12, centralSize, true);
   ev.setUint32(16, centralOffset, true);
-
   const out = new Uint8Array(offset + centralSize + end.length);
   let pos = 0;
   for (const p of localParts) { out.set(p, pos); pos += p.length; }
@@ -332,7 +321,6 @@ function buildZip(files) {
   out.set(end, pos);
   return out;
 }
-
 // ---------- routing ----------
 export default {
   async fetch(request, env) {
@@ -341,7 +329,6 @@ export default {
     try {
       if (path === "/api/health") return jsonResponse({ ok: true, service: "presenter-selections" });
       if (path === "/api/presenters") return jsonResponse({ presenters: PRESENTERS });
-
       if (path === "/api/meetings") {
         const date = cleanDate(url.searchParams.get("date"));
         if (!date) return jsonResponse({ error: "date required YYYY-MM-DD" }, 400);
