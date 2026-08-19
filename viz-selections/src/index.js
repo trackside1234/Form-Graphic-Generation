@@ -6,8 +6,9 @@
 * individual races (any mix of venues/codes) to a preview list. Presenters
 * each pick one runner per race in that list. The producer view collates
 * every presenter's selections into:
-*   1. A single Viz Trio 3.0 XML file (batch import of every selection), and
-*   2. A Word-compatible backup document.
+*   1. A single Viz Trio 3.0 XML file (batch import of every selection),
+*   2. A Word-compatible backup document, and
+*   3. A .zip of every selected horse's silk PNG for the graphics op.
 *
 * TAB proxy logic (meetings / event lookup) is carried over from the
 * TS-FORM-VT-EDIT-BUILDER project, trimmed down to just what this tool needs.
@@ -73,9 +74,6 @@ function compactEvent(payload) {
       track_condition: race.track_condition, class: race.class, country: race.country
     },
     results: res.map(x => ({ entrant_id: x.entrant_id, runner_number: x.runner_number, name: x.name, position: x.position })),
-    // NOTE: barrier/weight field names are best-effort guesses against the TAB
-    // schema (not confirmed against every meeting type) — fall back to null
-    // and just hide them in the UI if they don't come through.
     runners: (d.runners || []).map(x => ({
       entrant_id: x.entrant_id, horse_id: x.horse_id, runner_number: x.runner_number, name: x.name,
       is_scratched: x.is_scratched, jockey: x.jockey, driver: x.driver, driver_name: x.driver_name,
@@ -87,11 +85,19 @@ function compactEvent(payload) {
     }))
   };
 }
-// Best-guess Viz media-pool key for a horse's silk: lowercase, strip anything
-// that isn't a-z0-9. UNCONFIRMED against the real Viz asset library — the
-// producer UI lets this be overridden per selection before export.
+// Best-guess Viz media-pool key for a horse's silk: lowercase, spaces/dashes
+// become a single hyphen, anything else invalid gets stripped. e.g.
+// "Rock 'n' Roll Star" -> "rock-n-roll-star_128x128".
+// UNCONFIRMED against the real Viz asset library — the producer UI lets this
+// be overridden per selection before export.
 function silkSlug(horseName) {
-  const base = String(horseName || "").toLowerCase().replace(/[^a-z0-9]/g, "");
+  const base = String(horseName || "")
+    .toLowerCase()
+    .trim()
+    .replace(/[^a-z0-9\s-]/g, "")
+    .replace(/\s+/g, "-")
+    .replace(/-+/g, "-")
+    .replace(/^-+|-+$/g, "");
   return base ? `${base}_128x128` : "";
 }
 function xmlEscape(s) {
@@ -184,7 +190,6 @@ function buildElementXml(env, sel, elementId) {
 \t\t\t\t\t\t\t</element>`;
 }
 function buildShowXml(env, selections) {
-  // One group per race (event_id), containing every presenter's selection for that race.
   const byEvent = new Map();
   for (const sel of selections) {
     if (!byEvent.has(sel.eventId)) byEvent.set(sel.eventId, []);
@@ -237,6 +242,97 @@ ${blocks}
 </html>`;
 }
 
+// ---------- minimal in-Worker ZIP writer (stored/uncompressed entries) ----------
+let CRC_TABLE = null;
+function crc32(buf) {
+  if (!CRC_TABLE) {
+    CRC_TABLE = new Uint32Array(256);
+    for (let n = 0; n < 256; n++) {
+      let c = n;
+      for (let k = 0; k < 8; k++) c = c & 1 ? (0xEDB88320 ^ (c >>> 1)) : (c >>> 1);
+      CRC_TABLE[n] = c >>> 0;
+    }
+  }
+  let crc = 0xFFFFFFFF;
+  for (let i = 0; i < buf.length; i++) crc = (crc >>> 8) ^ CRC_TABLE[(crc ^ buf[i]) & 0xFF];
+  return (crc ^ 0xFFFFFFFF) >>> 0;
+}
+function dosDateTime(date) {
+  const time = ((date.getHours() & 0x1F) << 11) | ((date.getMinutes() & 0x3F) << 5) | (Math.floor(date.getSeconds() / 2) & 0x1F);
+  const dosDate = (((date.getFullYear() - 1980) & 0x7F) << 9) | (((date.getMonth() + 1) & 0xF) << 5) | (date.getDate() & 0x1F);
+  return { time, dosDate };
+}
+// files: [{ name: string, data: Uint8Array }] — all entries stored uncompressed
+// (method 0) so no compression library is needed inside the Worker.
+function buildZip(files) {
+  const encoder = new TextEncoder();
+  const { time, dosDate } = dosDateTime(new Date());
+  const localParts = [], centralParts = [];
+  let offset = 0;
+  for (const f of files) {
+    const nameBytes = encoder.encode(f.name);
+    const data = f.data;
+    const crc = crc32(data);
+    const size = data.length;
+
+    const lh = new Uint8Array(30 + nameBytes.length);
+    const lv = new DataView(lh.buffer);
+    lv.setUint32(0, 0x04034b50, true);
+    lv.setUint16(4, 20, true);
+    lv.setUint16(6, 0, true);
+    lv.setUint16(8, 0, true);
+    lv.setUint16(10, time, true);
+    lv.setUint16(12, dosDate, true);
+    lv.setUint32(14, crc, true);
+    lv.setUint32(18, size, true);
+    lv.setUint32(22, size, true);
+    lv.setUint16(26, nameBytes.length, true);
+    lv.setUint16(28, 0, true);
+    lh.set(nameBytes, 30);
+    localParts.push(lh, data);
+
+    const ch = new Uint8Array(46 + nameBytes.length);
+    const cv = new DataView(ch.buffer);
+    cv.setUint32(0, 0x02014b50, true);
+    cv.setUint16(4, 20, true);
+    cv.setUint16(6, 20, true);
+    cv.setUint16(8, 0, true);
+    cv.setUint16(10, 0, true);
+    cv.setUint16(12, time, true);
+    cv.setUint16(14, dosDate, true);
+    cv.setUint32(16, crc, true);
+    cv.setUint32(20, size, true);
+    cv.setUint32(24, size, true);
+    cv.setUint16(28, nameBytes.length, true);
+    cv.setUint16(30, 0, true);
+    cv.setUint16(32, 0, true);
+    cv.setUint16(34, 0, true);
+    cv.setUint16(36, 0, true);
+    cv.setUint32(38, 0, true);
+    cv.setUint32(42, offset, true);
+    ch.set(nameBytes, 46);
+    centralParts.push(ch);
+
+    offset += lh.length + data.length;
+  }
+  const centralSize = centralParts.reduce((a, p) => a + p.length, 0);
+  const centralOffset = offset;
+  const end = new Uint8Array(22);
+  const ev = new DataView(end.buffer);
+  ev.setUint32(0, 0x06054b50, true);
+  ev.setUint16(8, files.length, true);
+  ev.setUint16(10, files.length, true);
+  ev.setUint32(12, centralSize, true);
+  ev.setUint32(16, centralOffset, true);
+
+  const out = new Uint8Array(offset + centralSize + end.length);
+  let pos = 0;
+  for (const p of localParts) { out.set(p, pos); pos += p.length; }
+  for (const p of centralParts) { out.set(p, pos); pos += p.length; }
+  out.set(end, pos);
+  return out;
+}
+
 // ---------- routing ----------
 export default {
   async fetch(request, env) {
@@ -246,7 +342,6 @@ export default {
       if (path === "/api/health") return jsonResponse({ ok: true, service: "presenter-selections" });
       if (path === "/api/presenters") return jsonResponse({ presenters: PRESENTERS });
 
-      // --- TAB proxy: meetings for a date ---
       if (path === "/api/meetings") {
         const date = cleanDate(url.searchParams.get("date"));
         if (!date) return jsonResponse({ error: "date required YYYY-MM-DD" }, 400);
@@ -254,13 +349,11 @@ export default {
         const category = (url.searchParams.get("category") || "T").toUpperCase() === "H" ? "H" : "T";
         return jsonResponse(await meetingsFor(date, country, category));
       }
-      // --- TAB proxy: single event/race with runners ---
       if (path.startsWith("/api/event/")) {
         const id = cleanUUID(path.slice("/api/event/".length));
         if (!id) return jsonResponse({ error: "invalid event id" }, 400);
         return jsonResponse(compactEvent(await eventById(id)));
       }
-      // --- Producer: publish today's "races to be previewed" list ---
       if (path === "/api/show" && request.method === "POST") {
         const body = await request.json();
         if (!body?.date || !Array.isArray(body?.races) || !body.races.length) {
@@ -272,15 +365,13 @@ export default {
           }
         }
         await setShow(env, body);
-        await clearAllSelections(env); // fresh preview list = fresh selections
+        await clearAllSelections(env);
         return jsonResponse({ ok: true });
       }
-      // --- Anyone: read today's preview list ---
       if (path === "/api/show" && request.method === "GET") {
         const show = await getShow(env);
         return jsonResponse({ show });
       }
-      // --- Presenter: submit/update a selection ---
       if (path === "/api/selection" && request.method === "POST") {
         const body = await request.json();
         const required = ["presenterId", "eventId", "raceNumber", "meetingName", "runnerNumber", "horseName", "trainerName"];
@@ -304,12 +395,12 @@ export default {
           horseName: String(body.horseName),
           trainerName: String(body.trainerName),
           jockeyName: body.jockeyName ? String(body.jockeyName) : "",
-          silkSlug: body.silkSlug ? String(body.silkSlug) : silkSlug(body.horseName)
+          silkSlug: body.silkSlug ? String(body.silkSlug) : silkSlug(body.horseName),
+          silkImageUrl: body.silkImageUrl ? String(body.silkImageUrl) : ""
         };
         await env.SELECTIONS_KV.put(selectionKey(sel.eventId, sel.presenterId), JSON.stringify(sel));
         return jsonResponse({ ok: true, selection: sel });
       }
-      // --- Producer: override a selection's silk key before export ---
       if (path === "/api/selection/silk" && request.method === "POST") {
         const body = await request.json();
         if (!body?.eventId || !body?.presenterId || !body?.silkSlug) {
@@ -323,12 +414,10 @@ export default {
         await env.SELECTIONS_KV.put(key, JSON.stringify(sel));
         return jsonResponse({ ok: true, selection: sel });
       }
-      // --- Producer: read all selections (dashboard) ---
       if (path === "/api/selections" && request.method === "GET") {
         const selections = await getAllSelections(env);
         return jsonResponse({ selections });
       }
-      // --- Producer: export combined Viz Trio XML ---
       if (path === "/api/export/xml") {
         const selections = await getAllSelections(env);
         const show = await getShow(env);
@@ -341,7 +430,6 @@ export default {
           }
         });
       }
-      // --- Producer: export Word backup document ---
       if (path === "/api/export/doc") {
         const selections = await getAllSelections(env);
         const show = await getShow(env);
@@ -351,6 +439,38 @@ export default {
           headers: {
             "content-type": "application/msword; charset=utf-8",
             "content-disposition": `attachment; filename="selections-${show?.date || "export"}.doc"`
+          }
+        });
+      }
+      // --- Producer: bulk-download every selected horse's silk PNG as a .zip ---
+      if (path === "/api/export/silks") {
+        const selections = await getAllSelections(env);
+        if (!selections.length) return jsonResponse({ error: "no selections yet" }, 400);
+        const bySlug = new Map();
+        for (const sel of selections) {
+          if (sel.silkSlug && !bySlug.has(sel.silkSlug)) bySlug.set(sel.silkSlug, sel);
+        }
+        const files = [];
+        const errors = [];
+        for (const [slug, sel] of bySlug) {
+          if (!sel.silkImageUrl) { errors.push(`${sel.horseName}: no silk image URL captured`); continue; }
+          try {
+            const r = await fetch(sel.silkImageUrl);
+            if (!r.ok) { errors.push(`${sel.horseName}: HTTP ${r.status} fetching silk`); continue; }
+            const data = new Uint8Array(await r.arrayBuffer());
+            files.push({ name: `${slug}.png`, data });
+          } catch (e) {
+            errors.push(`${sel.horseName}: ${e.message}`);
+          }
+        }
+        if (!files.length) return jsonResponse({ error: "no silk images could be downloaded", details: errors }, 502);
+        const zipBytes = buildZip(files);
+        const show = await getShow(env);
+        return new Response(zipBytes, {
+          headers: {
+            "content-type": "application/zip",
+            "content-disposition": `attachment; filename="silks-${show?.date || "export"}.zip"`,
+            ...(errors.length ? { "x-silk-warnings": encodeURIComponent(errors.join(" | ")) } : {})
           }
         });
       }
