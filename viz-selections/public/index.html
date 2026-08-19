@@ -52,6 +52,7 @@
   header.topbar .tag{font-size:12px;color:var(--ink-dim);text-transform:uppercase;letter-spacing:1.2px;}
   .nav-link{font-size:13px;color:var(--ink-dim);text-decoration:none;border-bottom:1px dotted var(--ink-dim);}
   .nav-link:hover{color:var(--teal-bright);border-color:var(--teal-bright);}
+  .nav-link.pending{color:#5a638a;border-color:#5a638a;cursor:progress;}
   .card{
     background:var(--navy-panel);
     border:1px solid var(--line);
@@ -234,7 +235,7 @@ function renderLanding(){
         </a>
         <a class="role-card" href="#/dashboard">
           <div class="role-title">View Dashboard</div>
-          <div class="role-desc">See what's been submitted and download the XML / Word backup.</div>
+          <div class="role-desc">See what's been submitted and download the XML / Word / silks backup.</div>
         </a>
       </div>
       <div class="card" style="margin-top:16px">
@@ -292,7 +293,7 @@ function renderSetup(){
         <div class="status" id="meetingsStatus"></div>
       </div>
       <div class="card" id="meetingsCard" style="display:none">
-        <span class="eyebrow">Meetings &middot; tap a meeting to expand, then tap a race to add it</span>
+        <span class="eyebrow">Meetings &middot; tap a meeting to expand, then tap a race to add it &middot; stays open until you collapse it</span>
         <div id="meetingsList"></div>
       </div>
       <div class="card" id="cartCard">
@@ -308,6 +309,7 @@ function renderSetup(){
 
   let cart = [];
   const raceCache = new Map();
+  const expandedMeetings = new Set();
   let lastMeetings = [];
   let lastDate = '';
   let lastCategory = 'T';
@@ -342,10 +344,27 @@ function renderSetup(){
       `);
       row.querySelector('[data-act=up]').onclick = () => { if(i>0){ [cart[i-1],cart[i]]=[cart[i],cart[i-1]]; renderCart(); } };
       row.querySelector('[data-act=down]').onclick = () => { if(i<cart.length-1){ [cart[i+1],cart[i]]=[cart[i],cart[i+1]]; renderCart(); } };
-      row.querySelector('[data-act=remove]').onclick = () => { cart.splice(i,1); renderCart(); renderMeetingsList(); };
+      row.querySelector('[data-act=remove]').onclick = () => {
+        const removedId = cart[i].event_id;
+        cart.splice(i,1);
+        renderCart();
+        refreshMeetingRowFor(removedId);
+      };
       list.appendChild(row);
     });
     publishBtn.disabled = false;
+  }
+
+  // find whichever meeting's currently-rendered race row matches this event
+  // id and flip its "Added" badge back off, without collapsing anything.
+  function refreshMeetingRowFor(eventId){
+    document.querySelectorAll('#meetingsList [data-event-id]').forEach(node => {
+      if(node.dataset.eventId === String(eventId)){
+        node.classList.remove('selected');
+        const badge = node.querySelector('[data-role=add-label]');
+        if(badge) badge.textContent = 'Add \u2192';
+      }
+    });
   }
 
   function renderMeetingsList(){
@@ -359,21 +378,47 @@ function renderSetup(){
       const name = m.name || m.meeting_name || m.venue_name || 'Unnamed meeting';
       const races = m.races || m.events || [];
       const meetingId = m.id || m.meeting_id || name;
+      const isOpen = expandedMeetings.has(meetingId);
+
       const wrap = el(`
         <div class="meeting-item" style="cursor:default;flex-direction:column;align-items:stretch">
           <div style="display:flex;justify-content:space-between;align-items:center;cursor:pointer" data-role="head">
             <div><div class="m-name">${esc(name)}</div><div class="m-meta">${races.length} races &middot; ${esc(m.track_condition||'')}</div></div>
-            <span class="mono" style="color:var(--teal)">Expand \u2192</span>
+            <span class="mono" style="color:var(--teal)" data-role="toggle-label">${isOpen ? 'Collapse \u2191' : 'Expand \u2192'}</span>
           </div>
-          <div data-role="races" style="display:none;margin-top:10px"></div>
+          <div data-role="races" style="display:${isOpen ? 'block' : 'none'};margin-top:10px"></div>
         </div>
       `);
       const head = wrap.querySelector('[data-role=head]');
+      const toggleLabel = wrap.querySelector('[data-role=toggle-label]');
       const raceHost = wrap.querySelector('[data-role=races]');
-      head.onclick = async () => {
-        const open = raceHost.style.display === 'block';
-        raceHost.style.display = open ? 'none' : 'block';
-        if(open) return;
+
+      function drawRaceRows(){
+        const details = raceCache.get(meetingId) || [];
+        raceHost.innerHTML = '';
+        details.forEach(r => {
+          const added = inCart(r.event_id);
+          const rowBtn = el(`
+            <div class="meeting-item ${added?'selected':''}" data-event-id="${esc(r.event_id)}">
+              <div><div class="m-name">R${r.race_number} &middot; ${esc(r.description||'')}</div><div class="m-meta">${esc(r.distance||'')}m &middot; ${esc(r.track_condition||'')}</div></div>
+              <span class="mono" style="color:var(--teal)" data-role="add-label">${added ? 'Added \u2713' : 'Add \u2192'}</span>
+            </div>
+          `);
+          rowBtn.onclick = (evt) => {
+            evt.stopPropagation();
+            if(inCart(r.event_id)){
+              cart = cart.filter(x => x.event_id !== r.event_id);
+            } else {
+              cart.push(r);
+            }
+            renderCart();
+            drawRaceRows(); // redraw just this meeting's races — stays expanded
+          };
+          raceHost.appendChild(rowBtn);
+        });
+      }
+
+      async function loadAndRenderRaces(){
         if(!raceCache.has(meetingId)){
           raceHost.innerHTML = `<div class="empty-state">Loading races\u2026</div>`;
           try {
@@ -400,28 +445,18 @@ function renderSetup(){
             return;
           }
         }
-        const details = raceCache.get(meetingId);
-        raceHost.innerHTML = '';
-        details.forEach(r => {
-          const added = inCart(r.event_id);
-          const rowBtn = el(`
-            <div class="meeting-item ${added?'selected':''}">
-              <div><div class="m-name">R${r.race_number} &middot; ${esc(r.description||'')}</div><div class="m-meta">${esc(r.distance||'')}m &middot; ${esc(r.track_condition||'')}</div></div>
-              <span class="mono" style="color:var(--teal)">${added ? 'Added \u2713' : 'Add \u2192'}</span>
-            </div>
-          `);
-          rowBtn.onclick = () => {
-            if(inCart(r.event_id)){
-              cart = cart.filter(x => x.event_id !== r.event_id);
-            } else {
-              cart.push(r);
-            }
-            renderCart();
-            renderMeetingsList();
-          };
-          raceHost.appendChild(rowBtn);
-        });
+        drawRaceRows();
+      }
+
+      head.onclick = async () => {
+        const nowOpen = !expandedMeetings.has(meetingId);
+        if(nowOpen) expandedMeetings.add(meetingId); else expandedMeetings.delete(meetingId);
+        raceHost.style.display = nowOpen ? 'block' : 'none';
+        toggleLabel.textContent = nowOpen ? 'Collapse \u2191' : 'Expand \u2192';
+        if(nowOpen) await loadAndRenderRaces();
       };
+
+      if(isOpen) loadAndRenderRaces();
       list.appendChild(wrap);
     });
   }
@@ -437,6 +472,7 @@ function renderSetup(){
       const meetings = p?.meetings || p?.data?.meetings || (Array.isArray(p?.data)?p.data:[]) || [];
       lastMeetings = meetings;
       raceCache.clear();
+      expandedMeetings.clear();
       renderMeetingsList();
       $('#meetingsCard').style.display = 'block';
       status.textContent = `${meetings.length} meeting(s) found.`; status.className='status good';
@@ -475,6 +511,8 @@ function renderSelect(presenterId){
       const races = show.races;
       let current = 0;
       const runnerCache = new Map();
+      const pendingSaves = new Set();
+
       const wrap = el(`
         <div>
           <div class="card">
@@ -483,9 +521,27 @@ function renderSelect(presenterId){
           </div>
           <div class="race-tabs" id="raceTabs"></div>
           <div class="card" id="raceCard"></div>
+          <div class="card">
+            <button class="btn" id="saveSelectionsBtn">Save Selections</button>
+            <div class="status" id="saveStatus">Tap a runner to pick it, then hit Save before you leave.</div>
+          </div>
         </div>
       `);
       body.innerHTML = ''; body.appendChild(wrap);
+
+      // Warn if leaving mid-save via the back link.
+      const backLink = document.querySelector('header.topbar .nav-link');
+      if(backLink){
+        backLink.addEventListener('click', (e) => {
+          if(pendingSaves.size){
+            if(!confirm(`${pendingSaves.size} selection(s) are still saving \u2014 leave anyway?`)) e.preventDefault();
+          }
+        });
+      }
+      function refreshBackLinkState(){
+        if(!backLink) return;
+        backLink.classList.toggle('pending', pendingSaves.size > 0);
+      }
 
       function tabLabel(r){
         const code = (r.venue_name || r.meeting_name || '').replace(/[^A-Za-z]/g,'').slice(0,3).toUpperCase() || 'RCE';
@@ -500,6 +556,32 @@ function renderSelect(presenterId){
           t.onclick = () => { current = i; renderTabs(); renderRace(); };
           tabs.appendChild(t);
         });
+      }
+
+      async function persistSelection(race, r, jockeyLabel){
+        const token = Symbol();
+        pendingSaves.add(token);
+        refreshBackLinkState();
+        try {
+          const saved = await getJSON('/api/selection', {
+            method:'POST', headers:{'content-type':'application/json'},
+            body: JSON.stringify({
+              presenterId, eventId: race.event_id, raceNumber: race.race_number,
+              meetingName: race.meeting_name, description: race.description,
+              runnerNumber: r.runner_number, horseName: r.name,
+              trainerName: r.trainer_name || r.trainer || '',
+              jockeyName: jockeyLabel,
+              silkImageUrl: r.silk_url_128x128 || r.silk_url_64x64 || ''
+            })
+          });
+          mySelections.set(race.event_id, saved.selection);
+          renderTabs();
+        } catch(e){
+          alert(e.message);
+        } finally {
+          pendingSaves.delete(token);
+          refreshBackLinkState();
+        }
       }
 
       async function renderRace(){
@@ -542,26 +624,44 @@ function renderSelect(presenterId){
               <div class="r-check">&#10003;</div>
             </div>
           `);
-          node.onclick = async () => {
-            try {
-              const saved = await getJSON('/api/selection', {
-                method:'POST', headers:{'content-type':'application/json'},
-                body: JSON.stringify({
-                  presenterId, eventId: race.event_id, raceNumber: race.race_number,
-                  meetingName: race.meeting_name, description: race.description,
-                  runnerNumber: r.runner_number, horseName: r.name,
-                  trainerName: r.trainer_name || r.trainer || '',
-                  jockeyName: jockeyLabel
-                })
-              });
-              mySelections.set(race.event_id, saved.selection);
-              renderTabs();
-              renderRace();
-            } catch(e){ alert(e.message); }
+          node.onclick = () => {
+            document.querySelectorAll('.runner').forEach(n=>n.classList.remove('selected'));
+            node.classList.add('selected');
+            persistSelection(race, r, jockeyLabel);
           };
           raceCard.appendChild(node);
         });
       }
+
+      $('#saveSelectionsBtn').onclick = async () => {
+        const btn = $('#saveSelectionsBtn');
+        const status = $('#saveStatus');
+        btn.disabled = true;
+        status.textContent = pendingSaves.size ? 'Waiting for in-progress saves\u2026' : 'Confirming\u2026';
+        status.className = 'status';
+        try {
+          while(pendingSaves.size){
+            await new Promise(res => setTimeout(res, 150));
+          }
+          const { selections: fresh } = await getJSON('/api/selections');
+          const mine = fresh.filter(s=>s.presenterId===presenterId);
+          mine.forEach(s => mySelections.set(s.eventId, s));
+          renderTabs();
+          const missing = races.length - mine.length;
+          if(missing > 0){
+            status.textContent = `Saved. ${mine.length} of ${races.length} races picked \u2014 ${missing} still need a selection.`;
+            status.className = 'status bad';
+          } else {
+            status.textContent = `All ${mine.length} selections confirmed saved to the dashboard. Safe to go back now.`;
+            status.className = 'status good';
+          }
+        } catch(e){
+          status.textContent = e.message; status.className = 'status bad';
+        } finally {
+          btn.disabled = false;
+        }
+      };
+
       renderTabs();
       renderRace();
     } catch(e){
@@ -604,6 +704,7 @@ function renderDashboard(){
           <div class="export-row">
             <button class="btn" id="exportXml">Download Viz Trio XML</button>
             <button class="btn ghost" id="exportDoc">Download Word backup</button>
+            <button class="btn ghost" id="exportSilks">Download Silks (.zip)</button>
             <a class="btn ghost" href="#/setup" style="text-decoration:none;display:inline-flex;align-items:center">Start new preview list</a>
           </div>
           <div class="status" id="exportStatus"></div>
@@ -630,6 +731,7 @@ function renderDashboard(){
       });
       $('#exportXml').onclick = () => { window.location.href = '/api/export/xml'; };
       $('#exportDoc').onclick = () => { window.location.href = '/api/export/doc'; };
+      $('#exportSilks').onclick = () => { window.location.href = '/api/export/silks'; };
     } catch(e){
       $('#dashBody').innerHTML = `<div class="empty-state">${esc(e.message)}</div>`;
     }
